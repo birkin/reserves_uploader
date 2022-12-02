@@ -14,7 +14,7 @@ from django.core.wsgi import get_wsgi_application
 
 
 PROJECT_DIR_PATH = os.path.dirname( os.path.dirname(os.path.abspath(__file__)) )
-ENV_SETTINGS_FILE_PATH = os.environ['DJ_TMPLT32__ENV_SETTINGS_PATH']  # set in `httpd/passenger.conf`, and `env/bin/activate`
+ENV_SETTINGS_FILE_PATH = os.environ['RSRVS_UPLDR__ENV_SETTINGS_PATH']  # set in `httpd/passenger.conf`, and `env/bin/activate`
 
 sys.path.append( PROJECT_DIR_PATH )
 

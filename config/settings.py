@@ -22,14 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['DJ_TMPLT32__SECRET_KEY']
+SECRET_KEY = os.environ['RSRVS_UPLDR__SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = json.loads( os.environ['DJ_TMPLT32__DEBUG_JSON'] )
+DEBUG = json.loads( os.environ['RSRVS_UPLDR__DEBUG_JSON'] )
 
-ADMINS = json.loads( os.environ['DJ_TMPLT32__ADMINS_JSON'] )
+ADMINS = json.loads( os.environ['RSRVS_UPLDR__ADMINS_JSON'] )
 
-ALLOWED_HOSTS = json.loads( os.environ['DJ_TMPLT32__ALLOWED_HOSTS_JSON'] )  # list
+ALLOWED_HOSTS = json.loads( os.environ['RSRVS_UPLDR__ALLOWED_HOSTS_JSON'] )  # list
 
 
 # Application definition
@@ -74,7 +74,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = json.loads( os.environ['DJ_TMPLT32__DATABASES_JSON'] )
+DATABASES = json.loads( os.environ['RSRVS_UPLDR__DATABASES_JSON'] )
 
 
 # Password validation
@@ -115,14 +115,14 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = os.environ['DJ_TMPLT32__STATIC_URL']
-STATIC_ROOT = os.environ['DJ_TMPLT32__STATIC_ROOT']
+STATIC_URL = os.environ['RSRVS_UPLDR__STATIC_URL']
+STATIC_ROOT = os.environ['RSRVS_UPLDR__STATIC_ROOT']
 
 
 # Email
-SERVER_EMAIL = os.environ['DJ_TMPLT32__SERVER_EMAIL']
-EMAIL_HOST = os.environ['DJ_TMPLT32__EMAIL_HOST']
-EMAIL_PORT = int( os.environ['DJ_TMPLT32__EMAIL_PORT'] )
+SERVER_EMAIL = os.environ['RSRVS_UPLDR__SERVER_EMAIL']
+EMAIL_HOST = os.environ['RSRVS_UPLDR__EMAIL_HOST']
+EMAIL_PORT = int( os.environ['RSRVS_UPLDR__EMAIL_PORT'] )
 
 
 # Default primary key field type
@@ -149,7 +149,7 @@ LOGGING = {
         'logfile': {
             'level':'DEBUG',
             'class':'logging.FileHandler',  # note: configure server to use system's log-rotate to avoid permissions issues
-            'filename': os.environ['DJ_TMPLT32__LOG_PATH'],
+            'filename': os.environ['RSRVS_UPLDR__LOG_PATH'],
             'formatter': 'standard',
         },
         'console':{
@@ -166,7 +166,7 @@ LOGGING = {
         },
         'x_app': {
             'handlers': ['logfile'],
-            'level': os.environ['DJ_TMPLT32__LOG_LEVEL'],
+            'level': os.environ['RSRVS_UPLDR__LOG_LEVEL'],
             'propagate': False
         },
         # 'django.db.backends': {  # re-enable to check sql-queries! <https://docs.djangoproject.com/en/3.2/topics/logging/#django-db-backends>
