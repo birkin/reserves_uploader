@@ -1,0 +1,20 @@
+version: "3.9"
+   
+services:
+  web:
+    build: .
+    container_name: x_project-web-container
+    volumes:
+      - ../:/x_project_stuff
+      - ../DBs:/x_project_stuff/DBs
+      - ../logs:/x_project_stuff/logs
+      - .:/x_project_stuff/code
+    ports:
+      - "8000:8000"
+
+    environment:
+      - DJ_TMPLT32__ENV_SETTINGS_PATH=config/settings_localdev_env.sh
+
+    env_file: ./config/settings_localdev_env.sh
+
+    command: /bin/bash -c "python manage.py runserver 0.0.0.0:8000"
