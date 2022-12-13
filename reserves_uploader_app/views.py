@@ -1,10 +1,10 @@
 import datetime, json, logging
 
 from django.conf import settings as project_settings
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from x_app.lib import version_helper
+from reserves_uploader_app.lib import version_helper
 
 log = logging.getLogger(__name__)
 
@@ -12,6 +12,18 @@ log = logging.getLogger(__name__)
 # -------------------------------------------------------------------
 # main urls
 # -------------------------------------------------------------------
+
+def uploader( request ):
+    """ On GET, return the uploader page.
+        On POST, process the uploaded file via django chunked-upload. """
+    log.debug( 'starting' )
+    if request.method == 'POST':
+        log.debug( 'request.POST, ``%s``' % request.POST )
+        log.debug( 'request.FILES, ``%s``' % request.FILES )
+        return HttpResponse( 'Thanks for the upload!' )
+    else:
+        return render( request, 'reserves_uploader_app/uploader.html' )
+
 
 
 def info(request):

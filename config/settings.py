@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'x_app'
+    'reserves_uploader_app'
 ]
 
 MIDDLEWARE = [
@@ -164,7 +164,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'x_app': {
+        'reserves_uploader_app': {
             'handlers': ['logfile'],
             'level': os.environ['RSRVS_UPLDR__LOG_LEVEL'],
             'propagate': False
