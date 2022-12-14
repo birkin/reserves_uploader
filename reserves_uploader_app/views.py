@@ -1,10 +1,12 @@
 import datetime, json, logging
 
+import trio
 from django.conf import settings as project_settings
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from reserves_uploader_app.lib import version_helper
+from reserves_uploader_app.lib.version_helper import GatherCommitAndBranchData
 
 log = logging.getLogger(__name__)
 
@@ -55,6 +57,20 @@ def version( request ):
     rq_now = datetime.datetime.now()
     commit = version_helper.get_commit()
     branch = version_helper.get_branch()
+    info_txt = commit.replace( 'commit', branch )
+    context = version_helper.make_context( request, rq_now, info_txt )
+    output = json.dumps( context, sort_keys=True, indent=2 )
+    log.debug( f'output, ``{output}``' )
+    return HttpResponse( output, content_type='application/json; charset=utf-8' )
+
+
+def version2( request ):
+    """ Returns basic branch and commit data. """
+    rq_now = datetime.datetime.now()
+    gatherer = GatherCommitAndBranchData()
+    trio.run( gatherer.manage_git_calls )
+    commit = gatherer.commit
+    branch = gatherer.branch
     info_txt = commit.replace( 'commit', branch )
     context = version_helper.make_context( request, rq_now, info_txt )
     output = json.dumps( context, sort_keys=True, indent=2 )

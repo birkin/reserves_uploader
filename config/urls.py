@@ -11,5 +11,7 @@ urlpatterns = [
     path( 'admin/', admin.site.urls ),
     path( 'error_check/', views.error_check, name='error_check_url' ),
     path( 'version/', views.version, name='version_url' ),
+    path( 'version2/', views.version2, name='version2_url' ),
+
 ]
 
