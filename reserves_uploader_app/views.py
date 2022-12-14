@@ -52,19 +52,19 @@ def error_check( request ):
         return HttpResponseNotFound( '<div>404 / Not Found</div>' )
 
 
+# def version( request ):
+#     """ Returns basic branch and commit data. """
+#     rq_now = datetime.datetime.now()
+#     commit = version_helper.get_commit()
+#     branch = version_helper.get_branch()
+#     info_txt = commit.replace( 'commit', branch )
+#     context = version_helper.make_context( request, rq_now, info_txt )
+#     output = json.dumps( context, sort_keys=True, indent=2 )
+#     log.debug( f'output, ``{output}``' )
+#     return HttpResponse( output, content_type='application/json; charset=utf-8' )
+
+
 def version( request ):
-    """ Returns basic branch and commit data. """
-    rq_now = datetime.datetime.now()
-    commit = version_helper.get_commit()
-    branch = version_helper.get_branch()
-    info_txt = commit.replace( 'commit', branch )
-    context = version_helper.make_context( request, rq_now, info_txt )
-    output = json.dumps( context, sort_keys=True, indent=2 )
-    log.debug( f'output, ``{output}``' )
-    return HttpResponse( output, content_type='application/json; charset=utf-8' )
-
-
-def version2( request ):
     """ Returns basic branch and commit data. """
     rq_now = datetime.datetime.now()
     gatherer = GatherCommitAndBranchData()

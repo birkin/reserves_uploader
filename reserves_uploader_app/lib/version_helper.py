@@ -6,39 +6,6 @@ from django.conf import settings
 log = logging.getLogger(__name__)
 
 
-def get_commit():
-    """ Returns commit-string.
-        Called by views.version() """
-    original_directory = os.getcwd()
-    log.debug( 'BASE_DIR, ```%s```' % settings.BASE_DIR )
-    git_dir = settings.BASE_DIR
-    os.chdir( git_dir )
-    output8 = subprocess.check_output( ['git', 'log'], stderr=subprocess.STDOUT )
-    output = output8.decode( 'utf-8' )
-    os.chdir( original_directory )
-    lines = output.split( '\n' )
-    commit = lines[0]
-    return commit
-
-
-def get_branch():
-    """ Returns branch.
-        Called by views.version() """
-    original_directory = os.getcwd()
-    git_dir = settings.BASE_DIR
-    os.chdir( git_dir )
-    output8 = subprocess.check_output( ['git', 'branch'], stderr=subprocess.STDOUT )
-    output = output8.decode( 'utf-8' )
-    os.chdir( original_directory )
-    lines = output.split( '\n' )
-    branch = 'init'
-    for line in lines:
-        if line[0:1] == '*':
-            branch = line[2:]
-            break
-    return branch
-
-
 def make_context( request, rq_now, info_txt ):
     """ Assembles data-dct.
         Called by views.version() """
@@ -69,10 +36,9 @@ class GatherCommitAndBranchData:
 
     async def manage_git_calls( self ):
         """ Triggers calling subprocess commands concurrently.
-            Called by views.version2() """
+            Called by views.version() """
         log.debug( 'manage_git_calls' )
         results_holder_dct = {}  # receives git responses as they're produced
-        log.debug( 'round ONE async calls about to commence' )
         async with trio.open_nursery() as nursery:
             nursery.start_soon( self.fetch_commit_data, results_holder_dct )
             nursery.start_soon( self.fetch_branch_data, results_holder_dct )  
@@ -88,13 +54,8 @@ class GatherCommitAndBranchData:
         original_directory = os.getcwd()
         git_dir = settings.BASE_DIR
         os.chdir( git_dir )
-        # output8 = await trio.run_process( ['git', 'log'], stdout=subprocess.PIPE )
-        output_obj: subprocess.CompletedProcess = await trio.run_process( ['git', 'branch'], capture_stdout=True )
-        # log.debug( f'type(output8), ```{type(output8)}```' )
-        # log.debug( f'output8, ```{pprint.pformat(output8)}```' )
+        output_obj: subprocess.CompletedProcess = await trio.run_process( ['git', 'log'], capture_stdout=True )
         output: str = output_obj.stdout.decode( 'utf-8' )
-        # log.debug( f'type(output), ```{type(output)}```' )
-        # log.debug( f'output, ```{pprint.pformat(output)}```' )
         os.chdir( original_directory )
         lines = output.split( '\n' )
         commit = lines[0]
@@ -108,13 +69,8 @@ class GatherCommitAndBranchData:
         original_directory = os.getcwd()
         git_dir = settings.BASE_DIR
         os.chdir( git_dir )
-        # output8 = await trio.run_process( ['git', 'branch'], stdout=subprocess.PIPE )
         output_obj: subprocess.CompletedProcess = await trio.run_process( ['git', 'branch'], capture_stdout=True )
-        # log.debug( f'type(output8), ```{type(output8)}```' )
-        # log.debug( f'output8, ```{pprint.pformat(output8)}```' )
         output: str = output_obj.stdout.decode( 'utf-8' )
-        # log.debug( f'type(output), ```{type(output)}```' )
-        # log.debug( f'output, ```{pprint.pformat(output)}```' )
         os.chdir( original_directory )
         lines = output.split( '\n' )
         branch = 'init'
@@ -124,3 +80,5 @@ class GatherCommitAndBranchData:
                 break
         results_holder_dct['branch'] = branch
         return
+
+## end class GatherCommitAndBranchData
