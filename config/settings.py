@@ -74,7 +74,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = json.loads( os.environ['RSRVS_UPLDR__DATABASES_JSON'] )
+# DATABASES = json.loads( os.environ['RSRVS_UPLDR__DATABASES_JSON'] )
 
 
 # Password validation
