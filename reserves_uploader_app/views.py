@@ -1,4 +1,4 @@
-import datetime, json, logging, pprint
+import datetime, json, logging, os, pprint
 
 import trio
 from django.conf import settings
@@ -52,9 +52,26 @@ def uploader(request):
         form = UploadFileForm()
     return render(request, 'templates/single_file.html', {'form': form})
 
+# def handle_uploaded_file(f):
+#     """ Handles uploaded file.
+#         Currently overwrites existing file."""
+#     log.debug( f'f.__dict__, ``{pprint.pformat(f.__dict__)}``' )
+#     full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+#     with open( full_file_path, 'wb+' ) as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+#     log.debug( f'writing finished' )
+#     return
+
 def handle_uploaded_file(f):
+    """ Handle uploaded file without overwriting pre-existing file. """
     log.debug( f'f.__dict__, ``{pprint.pformat(f.__dict__)}``' )
     full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+    if os.path.exists( full_file_path ):
+        log.debug( 'file exists; appending timestamp' )
+        timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
+        full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
+    log.debug( f'full_file_path, ``{full_file_path}``' )
     with open( full_file_path, 'wb+' ) as destination:
         for chunk in f.chunks():
             destination.write(chunk)
