@@ -22,7 +22,8 @@ class PathsTest( TestCase ):
         )
 
     def test_paths_multiple(self):
-        """ Checks paths in bulk. """
+        """ Checks paths in bulk. 
+            TODO: add a challenging unicode-normalization entry. """
         root_path = '/path/to/files'
         file_names = [ 
             '1234567890.pdf', 
@@ -32,7 +33,8 @@ class PathsTest( TestCase ):
             '. bcdef.txt',
             'cde.txt',
             'de.txt',
-            'f.txt'
+            'f.txt',
+            'gh ij kl.txt',
         ]
         expected = [
             '/path/to/files/12/34/1234567890.pdf',
@@ -43,15 +45,12 @@ class PathsTest( TestCase ):
             'z/path/to/files/cd/cde.txt',
             'zz/path/to/files/de.txt',
             'zzz/path/to/files/f.txt',
+            'zzzz/path/to/files/gh/_i/gh_ij_kl.txt'
         ]
         for i, file_name in enumerate(file_names):
             self.assertEqual( expected[i], pather.create_file_path( file_name, root_path )    
         )
 
-        # self.assertEqual(
-        #     expected,
-        #     [ pather.create_file_path( file_name, root_path ) for file_name in file_names ]
-        # )
 
 class ErrorCheckTest( TestCase ):
     """ Checks urls. """
