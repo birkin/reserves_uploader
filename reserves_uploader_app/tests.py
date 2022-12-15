@@ -26,15 +26,15 @@ class PathsTest( TestCase ):
             TODO: add a challenging unicode-normalization entry. """
         root_path = '/path/to/files'
         file_names = [ 
-            '1234567890.pdf', 
-            'iñtërnâtiônàlĭzætiøn.pdf', 
-            '.abcdef.txt', 
-            ' qabcdef.txt',
-            '. bcdef.txt',
-            'cde.txt',
-            'de.txt',
-            'f.txt',
-            'gh ij kl.txt',
+            '1234567890.pdf',   # normal        # simple happy path
+            'iñtërnâtiônàlĭzætiøn.pdf',         # unicode
+            '.abcdef.txt',                      # eliminate leading dot
+            ' qabcdef.txt',                     # eliminate leading space
+            '. bcdef.txt',                      # eliminate leading dot and space
+            'cde.txt',                          # handle short filename
+            'de.txt',                           # handle shorter filename
+            'f.txt',                            # handle shortest filename
+            'gh ij kl.txt',                     # replace spaces with underscores
         ]
         expected = [
             '/path/to/files/12/34/1234567890.pdf',
