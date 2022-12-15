@@ -1,14 +1,57 @@
 import json, logging
 
 from django.conf import settings as project_settings
-# from django.test import TestCase
-from django.test import SimpleTestCase as TestCase  # TestCase requires db
+from django.test import SimpleTestCase as TestCase  # `from django.test import TestCase` requires db
 from django.test.utils import override_settings
+from reserves_uploader_app.lib import pather
 
 
 log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
 
+
+class PathsTest( TestCase ):
+    """ Checks paths. """
+
+    def test_paths(self):
+        """ Checks paths. """
+        root_path = '/path/to/files'
+        self.assertEqual(
+            '/path/to/files/12/34/1234567890.pdf',
+            pather.create_file_path( '1234567890.pdf', root_path ) 
+        )
+
+    def test_paths_multiple(self):
+        """ Checks paths in bulk. """
+        root_path = '/path/to/files'
+        file_names = [ 
+            '1234567890.pdf', 
+            'iñtërnâtiônàlĭzætiøn.pdf', 
+            '.abcdef.txt', 
+            ' qabcdef.txt',
+            '. bcdef.txt',
+            'cde.txt',
+            'de.txt',
+            'f.txt'
+        ]
+        expected = [
+            '/path/to/files/12/34/1234567890.pdf',
+            '/path/to/files/iñ/të/iñtërnâtiônàlĭzætiøn.pdf',
+            '/path/to/files/ab/cd/abcdef.txt',
+            '/path/to/files/qa/bc/qabcdef.txt',
+            '/path/to/files/bc/de/bcdef.txt',
+            'z/path/to/files/cd/cde.txt',
+            'zz/path/to/files/de.txt',
+            'zzz/path/to/files/f.txt',
+        ]
+        for i, file_name in enumerate(file_names):
+            self.assertEqual( expected[i], pather.create_file_path( file_name, root_path )    
+        )
+
+        # self.assertEqual(
+        #     expected,
+        #     [ pather.create_file_path( file_name, root_path ) for file_name in file_names ]
+        # )
 
 class ErrorCheckTest( TestCase ):
     """ Checks urls. """
