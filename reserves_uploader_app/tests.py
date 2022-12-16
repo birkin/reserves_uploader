@@ -26,16 +26,16 @@ class PathsTest( TestCase ):
             'gh ij kl.txt',                     # spaces in name; FAIL
             f'len_10.txt' * 10,                 # 100 characters; ok
             'x' + (f'len_10.txt' * 10),         # 101 characters; FAIL
-            'test_/.pdf',                       # slash in name; FAIL
-            'test_\\pdf',                       # backslash in name; FAIL
-            'test_>.pdf',                       # greater-than in name; FAIL
-            'test_<.pdf',                       # less-than in name; FAIL
-            'test_:.pdf',                       # colon in name; FAIL
             'test_".pdf',                       # double-quote in name; FAIL
-            "test_'.pdf",                       # single-quote in name; FAIL
             'test_&.pdf',                       # ampersand in name; FAIL
-            'test_?.pdf',                       # question-mark in name; FAIL
+            "test_'.pdf",                       # single-quote in name; FAIL
             'test_*.pdf',                       # asterisk in name; FAIL
+            'test_/.pdf',                       # slash in name; FAIL
+            'test_:.pdf',                       # colon in name; FAIL
+            'test_<.pdf',                       # less-than in name; FAIL
+            'test_>.pdf',                       # greater-than in name; FAIL
+            'test_?.pdf',                       # question-mark in name; FAIL
+            'test_\\pdf',                       # backslash in name; FAIL
             'test_|.pdf',                       # pipe in name; FAIL
         ]
 

@@ -11,6 +11,7 @@ def is_valid_filename( filename ) -> dict:
     log.debug( f'len(filename), ``{len(filename)}``' )
     assert type(filename) == str
     prohibited_characters = settings.PROHIBITED_CHARACTERS
+    log.debug( f'sorted(prohibited_characters), ``{sorted(prohibited_characters)}``' )
     assessment = { 'valid': False, 'err': None}
     filename = filename.strip( ' ' )
     if len(filename) == 0:
