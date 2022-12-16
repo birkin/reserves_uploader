@@ -62,6 +62,8 @@ class PathsTest( TestCase ):
             {'valid': False, 'err': 'filename contains a prohibited character'},
             {'valid': False, 'err': 'filename contains a prohibited character'},
             {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
         ]
         for i, file_name in enumerate( self.file_names_to_test ):
             result = pather.is_valid_filename(file_name)
