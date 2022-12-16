@@ -15,6 +15,8 @@ def is_valid_filename( filename ) -> dict:
         assessment['err'] = 'filename starts with a period'
     elif ' ' in filename:
         assessment['err'] = 'filename contains a space'
+    elif len(filename) > 100:
+        assessment['err'] = 'filename is too long'
     else:
         assessment['valid'] = True
     log.debug( f'assessment, ``{assessment}``' )
