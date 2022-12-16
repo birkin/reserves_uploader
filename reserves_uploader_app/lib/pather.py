@@ -1,5 +1,7 @@
 import logging
 
+from django.conf import settings
+
 log = logging.getLogger(__name__)
 
 
@@ -8,9 +10,7 @@ def is_valid_filename( filename ) -> dict:
     log.debug( f'filename, ``{filename}``' )
     log.debug( f'len(filename), ``{len(filename)}``' )
     assert type(filename) == str
-    prohibited_characters = [ '/', '\\', '>', '<', ':', '"', "'", '&', '?', '*', '|' ]
-    log.debug( f'prohibited_characters, ``{prohibited_characters}``' )
-    log.debug( f'sorted(prohibited_characters), ``{sorted(prohibited_characters)}``' )
+    prohibited_characters = settings.PROHIBITED_CHARACTERS
     assessment = { 'valid': False, 'err': None}
     filename = filename.strip( ' ' )
     if len(filename) == 0:
@@ -21,6 +21,8 @@ def is_valid_filename( filename ) -> dict:
         assessment['err'] = 'filename contains a space'
     elif len(filename) > 100:
         assessment['err'] = 'filename is too long'
+    elif any( [ char in filename for char in prohibited_characters ] ):
+        assessment['err'] = 'filename contains a prohibited character'
     else:
         assessment['valid'] = True
     log.debug( f'assessment, ``{assessment}``' )

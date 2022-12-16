@@ -193,3 +193,17 @@ LOGGING = {
 UPLOADS_DIR_PATH = os.environ['RSRVS_UPLDR__UPLOADS_DIR_PATH']
 UPLOADS_DIR_URL_ROOT = os.environ['RSRVS_UPLDR__UPLOADS_DIR_URL_ROOT']
 
+PROHIBITED_CHARACTERS = [
+    "\"",
+    "&",
+    "'",
+    "*",
+    "/",
+    ":",
+    "<",
+    ">",
+    "?",
+    "\\",
+    "|"
+]
+
