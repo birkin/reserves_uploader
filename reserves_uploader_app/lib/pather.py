@@ -3,6 +3,24 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def is_valid_filename( filename ) -> dict:
+    """ Checks that filename is valid for server. """
+    log.debug( f'filename, ``{filename}``' )
+    assert type(filename) == str
+    assessment = { 'valid': False, 'err': None}
+    filename = filename.strip( ' ' )
+    if len(filename) == 0:
+        assessment['err'] = 'filename is empty'
+    elif filename.startswith( '.' ):
+        assessment['err'] = 'filename starts with a period'
+    elif ' ' in filename:
+        assessment['err'] = 'filename contains a space'
+    else:
+        assessment['valid'] = True
+    log.debug( f'assessment, ``{assessment}``' )
+    return assessment
+
+
 def create_file_path( filename, root_path ):
     """ Creates file path via partial pair-tree structure.
         Example: given a root_path of `/path/to/files`, 
