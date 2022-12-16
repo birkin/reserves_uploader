@@ -24,8 +24,19 @@ class PathsTest( TestCase ):
             'de.txt',                           # shorter filename; ok
             'f.txt',                            # shortest filename; ok
             'gh ij kl.txt',                     # spaces in name; FAIL
-            f'len_10.txt' * 10,                # 100 characters; ok
-            'x' + (f'len_10.txt' * 10),        # 101 characters; FAIL
+            f'len_10.txt' * 10,                 # 100 characters; ok
+            'x' + (f'len_10.txt' * 10),         # 101 characters; FAIL
+            'test_/.pdf',                       # slash in name; FAIL
+            'test_\\pdf',                       # backslash in name; FAIL
+            'test_>.pdf',                       # greater-than in name; FAIL
+            'test_<.pdf',                       # less-than in name; FAIL
+            'test_:.pdf',                       # colon in name; FAIL
+            'test_".pdf',                       # double-quote in name; FAIL
+            "test_'.pdf",                       # single-quote in name; FAIL
+            'test_&.pdf',                       # ampersand in name; FAIL
+            'test_?.pdf',                       # question-mark in name; FAIL
+            'test_*.pdf',                       # asterisk in name; FAIL
+            'test_|.pdf',                       # pipe in name; FAIL
         ]
 
     def test_filenames_multiple(self):
@@ -42,6 +53,15 @@ class PathsTest( TestCase ):
             {'valid': False, 'err': 'filename contains a space'},
             {'valid': True, 'err': None},
             {'valid': False, 'err': 'filename is too long'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
+            {'valid': False, 'err': 'filename contains a prohibited character'},
         ]
         for i, file_name in enumerate( self.file_names_to_test ):
             result = pather.is_valid_filename(file_name)
