@@ -6,6 +6,7 @@ log = logging.getLogger(__name__)
 def is_valid_filename( filename ) -> dict:
     """ Checks that filename is valid for server. """
     log.debug( f'filename, ``{filename}``' )
+    log.debug( f'len(filename), ``{len(filename)}``' )
     assert type(filename) == str
     assessment = { 'valid': False, 'err': None}
     filename = filename.strip( ' ' )

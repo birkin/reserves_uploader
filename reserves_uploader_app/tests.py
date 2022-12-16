@@ -24,8 +24,8 @@ class PathsTest( TestCase ):
             'de.txt',                           # shorter filename; ok
             'f.txt',                            # shortest filename; ok
             'gh ij kl.txt',                     # spaces in name; FAIL
-            f'len_10.txt' * 100,                # 100 characters; ok
-            'x' + (f'len_10.txt' * 100),        # 101 characters; FAIL
+            f'len_10.txt' * 10,                # 100 characters; ok
+            'x' + (f'len_10.txt' * 10),        # 101 characters; FAIL
         ]
 
     def test_filenames_multiple(self):
