@@ -15,22 +15,29 @@ class PathsTest( TestCase ):
 
     def setUp(self) -> None:
         self.file_names_to_test = [ 
-            '1234567890.pdf',   # normal        # simple happy path
-            'iñtërnâtiônàlĭzætiøn.pdf',         # unicode
-            '.abcdef.txt',                      # eliminate leading dot
-            ' qabcdef.txt',                     # eliminate leading space
-            '. bcdef.txt',                      # eliminate leading dot and space
-            'cde.txt',                          # handle short filename
-            'de.txt',                           # handle shorter filename
-            'f.txt',                            # handle shortest filename
-            'gh ij kl.txt',                     # replace spaces with underscores
+            '1234567890.pdf',   # normal        # simple happy-path; ok
+            'iñtërnâtiônàlĭzætiøn.pdf',         # unicode; ok (TODO: decompose and add test re that)
+            '.abcdef.txt',                      # leading dot; FAIL
+            ' qabcdef.txt',                     # leading space; ok, validator does perform simple strip()
+            '. bcdef.txt',                      # leading dot and space; FAIL
+            'cde.txt',                          # short filename; ok
+            'de.txt',                           # shorter filename; ok
+            'f.txt',                            # shortest filename; ok
+            'gh ij kl.txt',                     # spaces in name; FAIL
         ]
 
     def test_filenames_multiple(self):
-        """ Checks filenames in bulk. """
+        """ Checks filenames in bulk against self.file_names_to_test. """
         expected = [
             {'valid': True, 'err': None},
             {'valid': True, 'err': None},
+            {'valid': False, 'err': 'filename starts with a period'},
+            {'valid': True, 'err': None},
+            {'valid': False, 'err': 'filename starts with a period'},
+            {'valid': True, 'err': None},
+            {'valid': 'foo', 'err': 'bar'},
+            {'valid': 'foo', 'err': 'bar'},
+            {'valid': 'foo', 'err': 'bar'},
         ]
         for i, file_name in enumerate( self.file_names_to_test ):
             result = pather.is_valid_filename(file_name)
