@@ -1,4 +1,4 @@
-from django.contrib import admin
+# from django.contrib import admin
 from django.urls import path
 from reserves_uploader_app import views
 

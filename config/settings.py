@@ -32,6 +32,7 @@ SECRET_KEY = os.environ['RSRVS_UPLDR__SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = json.loads( os.environ['RSRVS_UPLDR__DEBUG_JSON'] )
+# print( f'DEBUG, ``{DEBUG}``' )
 
 ADMINS = json.loads( os.environ['RSRVS_UPLDR__ADMINS_JSON'] )
 
@@ -41,22 +42,22 @@ ALLOWED_HOSTS = json.loads( os.environ['RSRVS_UPLDR__ALLOWED_HOSTS_JSON'] )  # l
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+#     'django.contrib.admin',
+#     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
+#     'django.contrib.sessions',
+#     'django.contrib.messages',
     'django.contrib.staticfiles',
     'reserves_uploader_app'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
