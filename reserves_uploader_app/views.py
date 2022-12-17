@@ -58,7 +58,8 @@ def uploader(request):
     else:
         log.debug( 'not POST detected' )
         form = UploadFileForm()
-        resp = render( request, 'templates/single_file.html', {'form': form} )
+        # resp = render( request, 'templates/single_file.html', {'form': form} )
+        resp = render( request, 'single_file.html', {'form': form} )
     return resp
 
 
