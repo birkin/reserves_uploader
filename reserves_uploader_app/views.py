@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 
 
 def info(request):
-    return HttpResponse( "Hello, world." )
+    return HttpResponse( "zHello, world." )
 
 
 @ensure_csrf_cookie
@@ -41,16 +41,43 @@ def uploader(request):
         log.debug( f'request.POST, ``{pprint.pformat(request.POST)}``' )
         log.debug( f'request.FILES, ``{pprint.pformat(request.FILES)}``' )
         form = UploadFileForm(request.POST, request.FILES)
+        log.debug( f'form.__dict__, ``{pprint.pformat(form.__dict__)}``' )
         if form.is_valid():
+            log.debug( 'form is valid' )
+            log.debug( f'form.cleaned_data, ``{pprint.pformat(form.cleaned_data)}``' )
+            log.debug( f'form.cleaned_data["file"], ``{pprint.pformat(form.cleaned_data["file"])}``' )
+            log.debug( f'form.cleaned_data["file"].name, ``{pprint.pformat(form.cleaned_data["file"].name)}``' )
             handle_uploaded_file( request.FILES['file'] )
             context = {'msg' : '<span style="color: green;">File successfully uploaded</span>'}
-            return render(request, 'templates/single_file.html', context)
+            # return render(request, 'templates/single_file.html', context)
         else:
             log.debug( 'form not valid' )
+            context = {'msg' : '<span style="color: red;">Form not valid</span>'}
+            # resp = render(request, 'templates/single_file.html', context)
+        resp = HttpResponseRedirect( reverse('uploader_url') )  ## TODO, add message as querystring, then display it
     else:
         log.debug( 'not POST detected' )
         form = UploadFileForm()
-    return render(request, 'templates/single_file.html', {'form': form})
+        resp = render( request, 'templates/single_file.html', {'form': form} )
+    return resp
+
+
+
+def handle_uploaded_file(f):
+    """ Handle uploaded file without overwriting pre-existing file. """
+    log.debug( 'starting handle_uploaded_file()' )
+    full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+    if os.path.exists( full_file_path ):
+        log.debug( 'file exists; appending timestamp' )
+        timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
+        full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
+    log.debug( f'full_file_path, ``{full_file_path}``' )
+    with open( full_file_path, 'wb+' ) as destination:
+        log.debug( 'starting write' )
+        for chunk in f.chunks():
+            destination.write(chunk)
+    log.debug( f'writing finished' )
+    return
 
 # def handle_uploaded_file(f):
 #     """ Handles uploaded file.
@@ -62,22 +89,6 @@ def uploader(request):
 #             destination.write(chunk)
 #     log.debug( f'writing finished' )
 #     return
-
-def handle_uploaded_file(f):
-    """ Handle uploaded file without overwriting pre-existing file. """
-    log.debug( f'f.__dict__, ``{pprint.pformat(f.__dict__)}``' )
-    full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
-    if os.path.exists( full_file_path ):
-        log.debug( 'file exists; appending timestamp' )
-        timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
-        full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
-    log.debug( f'full_file_path, ``{full_file_path}``' )
-    with open( full_file_path, 'wb+' ) as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-    log.debug( f'writing finished' )
-    return
-
 
 
 
