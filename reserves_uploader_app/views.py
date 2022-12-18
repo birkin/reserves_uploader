@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from reserves_uploader_app.forms import UploadFileForm
+from reserves_uploader_app.lib import uploader_helper
 from reserves_uploader_app.lib import version_helper
 from reserves_uploader_app.lib.version_helper import GatherCommitAndBranchData
 
@@ -58,6 +59,7 @@ def uploader(request):
     else:
         log.debug( 'not POST detected' )
         form = UploadFileForm()
+        context: dict = uploader_helper.build_uploader_GET_context()
         # resp = render( request, 'templates/single_file.html', {'form': form} )
         resp = render( request, 'single_file.html', {'form': form} )
     return resp
