@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Django - Single File Upload</title>
+        <title>Single File Upload</title>
+        <style type="text/css">
+            div#formbox {
+                padding-top: 2em;
+            }
+            /* the style below doesn't work; i think because the div is empty. */
+            /* 
+            div#bul_pl_header_end {  
+                padding-bottom: 5em;
+            } 
+            */
+        </style>
     </head>
     <body>
         <!-- PATTERN-LIBRARY-HEADER start... -->
         {{ pattern_header | safe }}
         <!-- PATTERN-LIBRARY-HEADER end -->
-		<div style="width: 500px; margin: auto;">
+		<div id="formbox" style="width: 500px; margin: auto;">
 			<fieldset name="Single File Upload">
 				{% if msg %} {% autoescape off %} {{ msg }} {% endautoescape %} {% endif %}
 				<form method="post" action="/uploader/" enctype="multipart/form-data">
 					{% csrf_token %}
 					<dl>
 						<p>
-							<label>Browse and select a file</label>&nbsp;&nbsp;
+							<!-- <label>Browse and select a file</label>&nbsp;&nbsp; -->
+                            <label>Browse and select a file...</label>
+                            </br>
 							<input type="file" name="file" autocomplete="off" required>
 						</p>
 					</dl>
 					<p>
+                        <hr>
 						<input type="submit" value="Upload">
 					</p>
 				</form>
