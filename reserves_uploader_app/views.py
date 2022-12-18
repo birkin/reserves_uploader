@@ -61,7 +61,8 @@ def uploader(request):
         form = UploadFileForm()
         context: dict = uploader_helper.build_uploader_GET_context()
         # resp = render( request, 'templates/single_file.html', {'form': form} )
-        resp = render( request, 'single_file.html', {'form': form} )
+        # resp = render( request, 'single_file.html', {'form': form} )
+        resp = render( request, 'single_file.html', context )
     return resp
 
 
