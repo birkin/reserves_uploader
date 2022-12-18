@@ -13,22 +13,22 @@ def build_uploader_GET_context( session_message: str ) -> dict:
         Called by views.uploader() """
     log.debug( f'session_message, ``{session_message}``' )
     context = {
-        'error_msg': '',
-        'success_msg': '',
+        'error_message': '',
+        'success_message': '',
         'pattern_header': '',
     }
     pattern_header_html: str = prep_pattern_header_html()
     context['pattern_header'] = pattern_header_html
     if 'success' in repr( session_message ):
-        context['success_msg'] = session_message
-        context['error_msg'] = ''
+        context['success_message'] = session_message
+        context['error_message'] = ''
     elif 'error' in repr( session_message ):
-        context['success_msg'] = ''
-        context['error_msg'] = session_message
+        context['success_message'] = ''
+        context['error_message'] = session_message
     log.debug( f'context for GET, ``{pprint.pformat(context)[0:500]}``' )
     # log.debug( f'context.keys(), ``{pprint.pformat(context.keys())}``' )
-    log.debug( f'context["error_msg"], ``{context["error_msg"]}``' )
-    log.debug( f'context["success_msg"], ``{context["success_msg"]}``' )
+    log.debug( f'context["error_message"], ``{context["error_message"]}``' )
+    log.debug( f'context["success_message"], ``{context["success_message"]}``' )
     return context
 
 

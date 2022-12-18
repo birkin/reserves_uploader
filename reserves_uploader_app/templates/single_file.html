@@ -20,7 +20,13 @@
         <!-- PATTERN-LIBRARY-HEADER end -->
 		<div id="formbox" style="width: 500px; margin: auto;">
 			<fieldset name="Single File Upload">
-				{% if msg %} {% autoescape off %} {{ msg }} {% endautoescape %} {% endif %}
+                <p>ZZZZ</p>
+				{% if error_message %} 
+                    <p style="color: red;">Form not valid, error: {error_messages}</p>
+                {% endif %}
+                {% if success_message %}
+                    <p style="color: green;">File uploaded successfully</p>
+                {% endif %}
 				<form method="post" action="/uploader/" enctype="multipart/form-data">
 					{% csrf_token %}
 					<dl>
