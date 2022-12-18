@@ -214,7 +214,7 @@ LOGGING = {
 UPLOADS_DIR_PATH = os.environ['RSRVS_UPLDR__UPLOADS_DIR_PATH']
 UPLOADS_DIR_URL_ROOT = os.environ['RSRVS_UPLDR__UPLOADS_DIR_URL_ROOT']
 
-PROHIBITED_CHARACTERS = [
+PROHIBITED_CHARACTERS = [  # for uploaded-file's filename
     '"',
     "&",
     "'",
@@ -227,4 +227,7 @@ PROHIBITED_CHARACTERS = [
     "\\",
     "|",
 ]
+
+PATTERN_LIB_HEADER_URL = os.environ['RSRVS_UPLDR__PATTERN_LIB_HEADER_URL']
+PATTERN_LIB_CACHE_TIMEOUT = int( os.environ['RSRVS_UPLDR__PATTERN_LIB_CACHE_TIMEOUT_IN_HOURS'] ) * 60 * 60  # cache() takes seconds
 
