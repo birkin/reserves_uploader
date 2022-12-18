@@ -15,7 +15,7 @@ def build_uploader_GET_context() -> dict:
     context = {}
     pattern_header_html: str = prep_pattern_header_html()
     context['pattern_header'] = pattern_header_html
-    log.debug( f'context, ``{pprint.pformat(context)}``' )
+    log.debug( f'context, ``{pprint.pformat(context)[0:500]}``' )
     return context
 
 
@@ -32,5 +32,5 @@ def prep_pattern_header_html() -> str:
         r = requests.get( settings.PATTERN_LIB_HEADER_URL )
         header_html: str = r.content.decode( 'utf8' )
         cache.set( cache_key, header_html, settings.PATTERN_LIB_CACHE_TIMEOUT )
-    log.debug( f'header_html, ``{header_html[0:1000]}``' )
+    log.debug( f'header_html, ``{header_html[0:500]}``' )
     return header_html

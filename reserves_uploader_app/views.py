@@ -41,6 +41,7 @@ def uploader(request):
         log.debug( 'POST detected' )
         log.debug( f'request.POST, ``{pprint.pformat(request.POST)}``' )
         log.debug( f'request.FILES, ``{pprint.pformat(request.FILES)}``' )
+        log.debug( 'about to instantiate form' )
         form = UploadFileForm(request.POST, request.FILES)
         log.debug( f'form.__dict__, ``{pprint.pformat(form.__dict__)}``' )
         if form.is_valid():
@@ -53,6 +54,8 @@ def uploader(request):
             # return render(request, 'templates/single_file.html', context)
         else:
             log.debug( 'form not valid' )
+            log.debug( f'form.errors, ``{pprint.pformat(form.errors)}``' )
+            log.debug( f'form.non_field_errors(), ``{pprint.pformat(form.non_field_errors())}``' )
             context = {'msg' : '<span style="color: red;">Form not valid</span>'}
             # resp = render(request, 'templates/single_file.html', context)
         resp = HttpResponseRedirect( reverse('uploader_url') )  ## TODO, add message as querystring, then display it
