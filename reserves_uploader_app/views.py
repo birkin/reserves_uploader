@@ -2,7 +2,7 @@ import datetime, json, logging, os, pprint
 
 import trio
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -37,35 +37,59 @@ def info(request):
 @ensure_csrf_cookie
 def uploader(request):
     log.debug( 'starting uploader()' )
+    # log.debug( f'inital incoming request.session.items(), ``{pprint.pformat(request.session.items())}``' )
     if request.method == 'POST':
         log.debug( 'POST detected' )
         log.debug( f'request.POST, ``{pprint.pformat(request.POST)}``' )
         log.debug( f'request.FILES, ``{pprint.pformat(request.FILES)}``' )
+        log.debug( f'request.session.items(), ``{pprint.pformat(request.session.items())}``' )
+        assert request.session['msg'] == ''
         log.debug( 'about to instantiate form' )
+
         form = UploadFileForm(request.POST, request.FILES)
         log.debug( f'form.__dict__, ``{pprint.pformat(form.__dict__)}``' )
         if form.is_valid():
             log.debug( 'form is valid' )
             log.debug( f'form.cleaned_data, ``{pprint.pformat(form.cleaned_data)}``' )
-            log.debug( f'form.cleaned_data["file"], ``{pprint.pformat(form.cleaned_data["file"])}``' )
-            log.debug( f'form.cleaned_data["file"].name, ``{pprint.pformat(form.cleaned_data["file"].name)}``' )
+            # log.debug( f'form.cleaned_data.__dict__, ``{pprint.pformat(form.cleaned_data.__dict__)}``' )
+            # log.debug( f'form.cleaned_data["file"], ``{pprint.pformat(form.cleaned_data["file"])}``' )
+            # log.debug( f'form.cleaned_data["file"].name, ``{pprint.pformat(form.cleaned_data["file"].name)}``' )
             handle_uploaded_file( request.FILES['file'] )
-            context = {'msg' : '<span style="color: green;">File successfully uploaded</span>'}
+            # context = {'msg' : '<span style="color: green;">File successfully uploaded</span>'}
+            msg = 'File successfully uploaded'
+            request.session['msg'] = msg
+            log.debug( f'request.session.items(), ``{pprint.pformat(request.session.items())}``' )
             # return render(request, 'templates/single_file.html', context)
         else:
             log.debug( 'form not valid' )
             log.debug( f'form.errors, ``{pprint.pformat(form.errors)}``' )
             log.debug( f'form.non_field_errors(), ``{pprint.pformat(form.non_field_errors())}``' )
-            context = {'msg' : '<span style="color: red;">Form not valid</span>'}
+            error_messages = form.non_field_errors()
+            log.debug( f'error_messages, ``{pprint.pformat(error_messages)}``' )
+            # context = {'msg' : '<span style="color: red;">Form not valid</span>'}
             # resp = render(request, 'templates/single_file.html', context)
+            # msg = f'<span style="color: red;">Form not valid, error: {error_messages}</span>'
+            msg = f'Form not valid, error: ``{error_messages}``.'
+            request.session['msg'] = msg
+        log.debug( 'POST handled, about to redirect' )
+        log.debug( f'at end of POST; request.session.keys(), ``{pprint.pformat(request.session.keys())}``' )
+        log.debug( f'at end of POST; request.session["msg"], ``{pprint.pformat(request.session["msg"])}``' )
         resp = HttpResponseRedirect( reverse('uploader_url') )  ## TODO, add message as querystring, then display it
-    else:
-        log.debug( 'not POST detected' )
+    elif request.method == 'GET':
+        log.debug( 'GET detected' )
+        log.debug( f'request.session.items(), ``{pprint.pformat(request.session.items())}``' )
+        ## get any session message ----------------------------------
+        session_message = request.session.get('msg', '')
+        log.debug( f'session_message, ``{session_message}``' )
+        ## clear out session message --------------------------------
+        request.session['msg'] = ''
         form = UploadFileForm()
-        context: dict = uploader_helper.build_uploader_GET_context()
+        context: dict = uploader_helper.build_uploader_GET_context( session_message )
         # resp = render( request, 'templates/single_file.html', {'form': form} )
         # resp = render( request, 'single_file.html', {'form': form} )
         resp = render( request, 'single_file.html', context )
+    else:
+        resp = HttpResponseBadRequest( 'bad request' )
     return resp
 
 

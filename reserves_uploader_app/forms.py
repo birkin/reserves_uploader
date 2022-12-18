@@ -16,6 +16,7 @@ class UploadFileForm(forms.Form):
     # def clean_filename(self):
     def clean(self):
         log.debug( 'starting clean()' )
+        log.debug( f'self.cleaned_data, ``{self.cleaned_data}``' )
         filename = self.cleaned_data["file"].name
         for prohibited_character in settings.PROHIBITED_CHARACTERS:
             if prohibited_character in filename:
