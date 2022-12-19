@@ -26,13 +26,15 @@ def info(request):
 @ensure_csrf_cookie
 def uploader(request):
     log.debug( 'starting uploader()' )
-    log.debug( f'inital incoming request.session.keys(), ``{pprint.pformat(request.session.keys())}``' )
+    # log.debug( f'inital incoming request.session.keys(), ``{pprint.pformat(request.session.keys())}``' )
     if request.method == 'POST':
         log.debug( 'POST detected' )
         log.debug( f'request.POST, ``{pprint.pformat(request.POST)}``' )
         log.debug( f'request.FILES, ``{pprint.pformat(request.FILES)}``' )
         log.debug( f'request.session.items(), ``{pprint.pformat(request.session.items())}``' )
-        assert request.session['msg'] == ''
+        # assert request.session['msg'] == ''
+        assert request.session['session_error_message'] == ''
+        assert request.session['session_success_message'] == ''
         log.debug( 'about to instantiate form' )
         form = UploadFileForm(request.POST, request.FILES)
         log.debug( f'form.__dict__, ``{pprint.pformat(form.__dict__)}``' )
@@ -42,32 +44,43 @@ def uploader(request):
             filename = uploader_helper.handle_uploaded_file( request.FILES['file'] )  # if duplicate, will have timestamp appended
             file_url = f'{settings.UPLOADS_DIR_URL_ROOT}/{filename}'
             msg = f'File uploaded; link: <a href="{file_url}">{filename}</a>'
-            request.session['msg'] = msg
+            request.session['session_success_message'] = msg
             log.debug( f'request.session.items(), ``{pprint.pformat(request.session.items())}``' )
         else:
             log.debug( 'form not valid' )
             log.debug( f'form.errors, ``{pprint.pformat(form.errors)}``' )
             log.debug( f'form.non_field_errors(), ``{pprint.pformat(form.non_field_errors())}``' )
-            error_message = form.non_field_errors()[0]
-            log.debug( f'error_message, ``{pprint.pformat(error_message)}``' )
-            request.session['msg'] = error_message
+            msg: str = form.non_field_errors()[0]
+            log.debug( f'error_message, ``{pprint.pformat( msg )}``' )
+            # request.session['msg'] = error_message
+            request.session['session_error_message'] = msg
         log.debug( 'POST handled, about to redirect' )
         log.debug( f'at end of POST; request.session.keys(), ``{pprint.pformat(request.session.keys())}``' )
-        log.debug( f'at end of POST; request.session["msg"], ``{pprint.pformat(request.session["msg"])}``' )
+        # log.debug( f'at end of POST; request.session["msg"], ``{pprint.pformat(request.session["msg"])}``' )
+        log.debug( f'at end of POST; request.session["session_success_message"], ``{pprint.pformat(request.session["session_success_message"])}``' )
+        log.debug( f'at end of POST; request.session["session_error_message"], ``{pprint.pformat(request.session["session_error_message"])}``' )
         resp = HttpResponseRedirect( reverse('uploader_url') )  ## TODO, add message as querystring, then display it
     elif request.method == 'GET':
         log.debug( 'GET detected' )
         log.debug( f'request.session.items(), ``{pprint.pformat(request.session.items())}``' )
-        ## get any session message ----------------------------------
-        session_message = request.session.get('msg', '')
-        log.debug( f'session_message, ``{session_message}``' )
+        ## get any session messages ---------------------------------
+        # session_message = request.session.get('msg', '')
+        session_error_message = request.session.get('session_error_message', '')
+        session_success_message = request.session.get('session_success_message', '')
+        # log.debug( f'session_message, ``{session_message}``' )
+        log.debug( f'session_error_message, ``{session_error_message}``' )
+        log.debug( f'session_success_message, ``{session_success_message}``' )
         ## clear out session message --------------------------------
-        request.session['msg'] = ''
-        context: dict = uploader_helper.build_uploader_GET_context( session_message )
+        # request.session['msg'] = ''
+        request.session['session_error_message'] = ''
+        request.session['session_success_message'] = ''
+        # context: dict = uploader_helper.build_uploader_GET_context( session_message )
+        context: dict = uploader_helper.build_uploader_GET_context( session_error_message, session_success_message )
         resp = render( request, 'single_file.html', context )
     else:
         resp = HttpResponseBadRequest( 'bad request' )
     return resp
+
 
 # @ensure_csrf_cookie
 # def uploader(request):

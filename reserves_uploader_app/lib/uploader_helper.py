@@ -13,16 +13,18 @@ log = logging.getLogger(__name__)
 ## GET helpers ------------------------------------------------------
 
 
-def build_uploader_GET_context( session_message: str ) -> dict:
+def build_uploader_GET_context( session_error_message: str, session_success_message: str ) -> dict:
     """ Builds context for the uploader page.
         Called by views.uploader() """
-    log.debug( f'session_message, ``{session_message}``' )
+    # log.debug( f'session_message, ``{session_message}``' )
+    log.debug( f'session_error_message, ``{session_error_message}``' )
+    log.debug( f'session_success_message, ``{session_success_message}``' )
     context = {
         'error_message': '',
         'success_message': '',
         'pattern_header': '',
         'prohibited_characters': '',
-        'form_post_url': ''
+        'form_post_url': '',
     }
     ## add prohibited characters to context -------------------------
     prohibited_characters_string = ', '.join( settings.PROHIBITED_CHARACTERS )
@@ -32,12 +34,14 @@ def build_uploader_GET_context( session_message: str ) -> dict:
     pattern_header_html: str = prep_pattern_header_html()
     context['pattern_header'] = pattern_header_html
     ## add error and success messages to context --------------------
-    if 'uploaded' in repr( session_message ):
-        context['success_message'] = session_message
-        context['error_message'] = ''
-    elif 'error' in repr( session_message ):
-        context['success_message'] = ''
-        context['error_message'] = session_message
+    context['error_message'] = session_error_message
+    context['success_message'] = session_success_message
+    # if 'uploaded' in repr( session_message ):
+    #     context['success_message'] = session_message
+    #     context['error_message'] = ''
+    # elif 'error' in repr( session_message ):
+    #     context['success_message'] = ''
+    #     context['error_message'] = session_message
     ## add form-post-url to context ---------------------------------
     uploader_url = reverse( 'uploader_url' )
     context['uploader_url'] = uploader_url
@@ -47,6 +51,42 @@ def build_uploader_GET_context( session_message: str ) -> dict:
     log.debug( f'context["error_message"], ``{context["error_message"]}``' )
     log.debug( f'context["success_message"], ``{context["success_message"]}``' )
     return context
+
+
+# def build_uploader_GET_context( session_message: str ) -> dict:
+#     """ Builds context for the uploader page.
+#         Called by views.uploader() """
+#     log.debug( f'session_message, ``{session_message}``' )
+#     context = {
+#         'error_message': '',
+#         'success_message': '',
+#         'pattern_header': '',
+#         'prohibited_characters': '',
+#         'form_post_url': ''
+#     }
+#     ## add prohibited characters to context -------------------------
+#     prohibited_characters_string = ', '.join( settings.PROHIBITED_CHARACTERS )
+#     log.debug( f'prohibited_characters_string, ``{prohibited_characters_string}``')
+#     context['prohibited_characters'] = prohibited_characters_string
+#     ## add pattern-header to context --------------------------------
+#     pattern_header_html: str = prep_pattern_header_html()
+#     context['pattern_header'] = pattern_header_html
+#     ## add error and success messages to context --------------------
+#     if 'uploaded' in repr( session_message ):
+#         context['success_message'] = session_message
+#         context['error_message'] = ''
+#     elif 'error' in repr( session_message ):
+#         context['success_message'] = ''
+#         context['error_message'] = session_message
+#     ## add form-post-url to context ---------------------------------
+#     uploader_url = reverse( 'uploader_url' )
+#     context['uploader_url'] = uploader_url
+#     ## return context -----------------------------------------------
+#     log.debug( f'context for GET, ``{pprint.pformat(context)[0:500]}``' )
+#     # log.debug( f'context.keys(), ``{pprint.pformat(context.keys())}``' )
+#     log.debug( f'context["error_message"], ``{context["error_message"]}``' )
+#     log.debug( f'context["success_message"], ``{context["success_message"]}``' )
+#     return context
 
 
 def prep_pattern_header_html() -> str:
