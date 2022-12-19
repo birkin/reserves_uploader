@@ -23,7 +23,7 @@ class UploadFileForm(forms.Form):
                 bad_characters.append( prohibited_character )
         if len( bad_characters ) > 0:
             bad_character_string = ', '.join( bad_characters )
-            msg = f'error: prohibited filename characters: ``{bad_character_string}``'
+            msg = f'error: prohibited filename characters: {bad_character_string}'
             log.debug( msg )
             raise ValidationError( msg )
         # Always return a value to use as the new cleaned data, even if
