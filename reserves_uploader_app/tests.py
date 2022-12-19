@@ -1,4 +1,4 @@
-import json, logging
+import json, logging, unicodedata
 
 from django.conf import settings as project_settings
 from django.test import SimpleTestCase as TestCase  # `from django.test import TestCase` requires db
@@ -10,8 +10,8 @@ log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
 
 
-class PathsTest( TestCase ):
-    """ Checks paths. """
+class FilenamesTest( TestCase ):
+    """ Checks filenames. """
 
     def setUp(self) -> None:
         self.file_names_to_test = [ 
@@ -71,6 +71,29 @@ class PathsTest( TestCase ):
                 expected[i], result, 
                 f'failed on filename, ``{file_name}``; got, ``{result}``'   # only shows on failure
                 )
+
+    def test_unicode_decomposition(self):
+        """ Checks unicode decomposition. """
+        ## a combined character should decompose
+        initial_filename = 'qu' + '\u00e9' + '.pdf'
+        expected = 'qu' + '\u0065' + '\u0301' + '.pdf'
+        result = pather.normalize_unicode( initial_filename )
+        self.assertEqual( expected, result, f'failed on filename, ``{initial_filename}``; got, ``{result}``' )
+        ## a decomposed character should remain decomposed
+        initial_filename = 'iñtërnâtiônàlĭzætiøn.pdf'
+        decomposed_filename = unicodedata.normalize( 'NFKD', initial_filename )
+        expected = decomposed_filename
+        result = pather.normalize_unicode( initial_filename )
+        self.assertEqual( expected, result, f'failed on filename, ``{initial_filename}``; got, ``{result}``' )
+        ## a composed character-string should decompose
+        initial_filename = 'iñtërnâtiônàlĭzætiøn.pdf'
+        decomposed_filename = unicodedata.normalize( 'NFKD', initial_filename )
+        composed_filename = unicodedata.normalize( 'NFC', decomposed_filename )
+        expected = decomposed_filename
+        result = pather.normalize_unicode( composed_filename )
+        self.assertEqual( expected, result, f'failed on filename, ``{initial_filename}``; got, ``{result}``' )
+        
+        ## end class FilenamesTest()
 
 
     # def test_paths(self):

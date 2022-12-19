@@ -4,6 +4,7 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.urls import reverse
+from reserves_uploader_app.lib import pather
 
 
 log = logging.getLogger(__name__)
@@ -74,6 +75,7 @@ def handle_uploaded_file( f ) -> str:
     log.debug( 'starting handle_uploaded_file()' )
     filename = f.name
     log.debug( f'filename initially, ``{filename}``' )
+    filename: str = pather.normalize_unicode( filename )
     full_file_path = f'{settings.UPLOADS_DIR_PATH}/{filename}'
     if os.path.exists( full_file_path ):
         log.debug( 'file exists; appending timestamp' )
@@ -92,18 +94,25 @@ def handle_uploaded_file( f ) -> str:
     return filename
 
 
-# def handle_uploaded_file(f):
-#     """ Handle uploaded file without overwriting pre-existing file. """
+# def handle_uploaded_file( f ) -> str:
+#     """ Handle uploaded file without overwriting pre-existing file. 
+#         Called by views.uploader() """
 #     log.debug( 'starting handle_uploaded_file()' )
-#     full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+#     filename = f.name
+#     log.debug( f'filename initially, ``{filename}``' )
+#     full_file_path = f'{settings.UPLOADS_DIR_PATH}/{filename}'
 #     if os.path.exists( full_file_path ):
 #         log.debug( 'file exists; appending timestamp' )
 #         timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
-#         full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
+#         ( mainpart, extension ) = os.path.splitext( filename )
+#         if extension:
+#             filename = f'{mainpart}_{timestamp}{extension}'
+#         full_file_path = f'{settings.UPLOADS_DIR_PATH}/{filename}'
 #     log.debug( f'full_file_path, ``{full_file_path}``' )
 #     with open( full_file_path, 'wb+' ) as destination:
 #         log.debug( 'starting write' )
 #         for chunk in f.chunks():
 #             destination.write(chunk)
 #     log.debug( f'writing finished' )
-#     return
+#     log.debug( f'filename now, ``{filename}``' )
+#     return filename

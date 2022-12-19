@@ -1,8 +1,19 @@
-import logging
+import logging, unicodedata
 
 from django.conf import settings
 
 log = logging.getLogger(__name__)
+
+
+def normalize_unicode( initial_filename ) -> str:
+    """ Normalizes unicode characters by decomposition.
+        Called by `zzz`. """
+    log.debug( f'initial_filename, ``{initial_filename}``' )
+    normalized_filename = unicodedata.normalize( 'NFKD', initial_filename )
+    log.debug( f'normalized_filename, ``{normalized_filename}``' )
+    evaluation = ( initial_filename == normalized_filename )
+    log.debug( f'evaluation, ``{evaluation}``' )
+    return normalized_filename
 
 
 def is_valid_filename( filename ) -> dict:
