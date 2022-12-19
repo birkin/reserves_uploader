@@ -81,7 +81,7 @@ def handle_uploaded_file( f ) -> str:
         ( mainpart, extension ) = os.path.splitext( filename )
         if extension:
             filename = f'{mainpart}_{timestamp}{extension}'
-        full_file_path = f'{settings.UPLOADS_DIR_PATH}/filename'
+        full_file_path = f'{settings.UPLOADS_DIR_PATH}/{filename}'
     log.debug( f'full_file_path, ``{full_file_path}``' )
     with open( full_file_path, 'wb+' ) as destination:
         log.debug( 'starting write' )
