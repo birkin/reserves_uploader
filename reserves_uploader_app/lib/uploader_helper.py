@@ -26,7 +26,7 @@ def build_uploader_GET_context( session_message: str ) -> dict:
     context['prohibited_characters'] = prohibited_characters_string
     pattern_header_html: str = prep_pattern_header_html()
     context['pattern_header'] = pattern_header_html
-    if 'success' in repr( session_message ):
+    if 'uploaded' in repr( session_message ):
         context['success_message'] = session_message
         context['error_message'] = ''
     elif 'error' in repr( session_message ):
@@ -56,21 +56,45 @@ def prep_pattern_header_html() -> str:
     return header_html
 
 
-## POST helpers ------------------------------------------------------
+## POST helper ------------------------------------------------------
 
 
-def handle_uploaded_file(f):
-    """ Handle uploaded file without overwriting pre-existing file. """
+def handle_uploaded_file( f ) -> str:
+    """ Handle uploaded file without overwriting pre-existing file. 
+        Called by views.uploader() """
     log.debug( 'starting handle_uploaded_file()' )
-    full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+    filename = f.name
+    log.debug( f'filename initially, ``{filename}``' )
+    full_file_path = f'{settings.UPLOADS_DIR_PATH}/{filename}'
     if os.path.exists( full_file_path ):
         log.debug( 'file exists; appending timestamp' )
         timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
-        full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
+        ( mainpart, extension ) = os.path.splitext( filename )
+        if extension:
+            filename = f'{mainpart}_{timestamp}{extension}'
+        full_file_path = f'{settings.UPLOADS_DIR_PATH}/filename'
     log.debug( f'full_file_path, ``{full_file_path}``' )
     with open( full_file_path, 'wb+' ) as destination:
         log.debug( 'starting write' )
         for chunk in f.chunks():
             destination.write(chunk)
     log.debug( f'writing finished' )
-    return
+    log.debug( f'filename now, ``{filename}``' )
+    return filename
+
+
+# def handle_uploaded_file(f):
+#     """ Handle uploaded file without overwriting pre-existing file. """
+#     log.debug( 'starting handle_uploaded_file()' )
+#     full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+#     if os.path.exists( full_file_path ):
+#         log.debug( 'file exists; appending timestamp' )
+#         timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
+#         full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
+#     log.debug( f'full_file_path, ``{full_file_path}``' )
+#     with open( full_file_path, 'wb+' ) as destination:
+#         log.debug( 'starting write' )
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+#     log.debug( f'writing finished' )
+#     return

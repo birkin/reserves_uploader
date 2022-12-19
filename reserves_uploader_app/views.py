@@ -51,12 +51,11 @@ def uploader(request):
         if form.is_valid():
             log.debug( 'form is valid' )
             log.debug( f'form.cleaned_data, ``{pprint.pformat(form.cleaned_data)}``' )
-            # log.debug( f'form.cleaned_data.__dict__, ``{pprint.pformat(form.cleaned_data.__dict__)}``' )
-            # log.debug( f'form.cleaned_data["file"], ``{pprint.pformat(form.cleaned_data["file"])}``' )
-            # log.debug( f'form.cleaned_data["file"].name, ``{pprint.pformat(form.cleaned_data["file"].name)}``' )
-            uploader_helper.handle_uploaded_file( request.FILES['file'] )
-            # context = {'msg' : '<span style="color: green;">File successfully uploaded</span>'}
-            msg = 'File successfully uploaded'
+            filename = uploader_helper.handle_uploaded_file( request.FILES['file'] )  # if duplicate, will have timestamp appended
+            # msg = 'File successfully uploaded'
+            file_url = f'{settings.UPLOADS_DIR_URL_ROOT}/{filename}'
+            msg = f'File uploaded; link: <a href="{file_url}">{filename}</a>'
+            # msg = f'File successfully uploaded; url: ``{file_url}``.'
             request.session['msg'] = msg
             log.debug( f'request.session.items(), ``{pprint.pformat(request.session.items())}``' )
             # return render(request, 'templates/single_file.html', context)
