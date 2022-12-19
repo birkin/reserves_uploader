@@ -10,13 +10,49 @@ log = logging.getLogger(__name__)
 TestCase.maxDiff = 1000
 
 
+class PathsTest( TestCase ):
+    """ Checks paths. """
+
+    def setUp(self) -> None:
+        self.file_names_to_test = [
+            '1234567890.pdf',   # normal        # simple happy-path; ok
+            'iñtërnâtiônàlĭzætiøn.pdf',         # unicode; ok 
+            ' qabcdef.txt',                     # leading space; ok, validator does perform simple strip()
+            'cde.txt',                          # short filename; ok
+            'de.txt',                           # shorter filename; ok
+            'f.txt',                            # shortest filename; ok
+            'len_10_txt' * 10,                  # 100 characters; ok
+        ]           
+
+    def test_paths_multiple(self):
+        """ Checks pairtree paths in bulk against self.file_names_to_test. """
+        root_dir_path = '/foo'
+        expected = [
+            '/foo/12/23/1234567890.pdf',
+            '/foo/iñ/te/iñtërnâtiônàlĭzætiøn.pdf',
+            '/foo/qa/bc/qabcdef.txt',
+            '/foo/cd/cde.txt',
+            '/foo/de/de.txt',
+            '/foo/f.txt',
+            '/foo/le/n_/%s' % ('len_10_txt' * 10),           
+        ]
+        for i, filename in enumerate( self.file_names_to_test ):
+            result = pather.get_path( filename, root_dir_path )
+            self.assertEqual( 
+                expected[i], result, 
+                f'failed on filename, ``{filename}``; got, ``{result}``'   # only shows on failure
+            )
+
+    ## end class PathsTest()
+
+
 class FilenamesTest( TestCase ):
     """ Checks filenames. """
 
     def setUp(self) -> None:
         self.file_names_to_test = [ 
             '1234567890.pdf',   # normal        # simple happy-path; ok
-            'iñtërnâtiônàlĭzætiøn.pdf',         # unicode; ok (TODO: decompose and add test re that)
+            'iñtërnâtiônàlĭzætiøn.pdf',         # unicode; ok 
             '.abcdef.txt',                      # leading dot; FAIL
             ' qabcdef.txt',                     # leading space; ok, validator does perform simple strip()
             '. bcdef.txt',                      # leading dot and space; FAIL
