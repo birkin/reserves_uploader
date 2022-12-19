@@ -54,7 +54,7 @@ def uploader(request):
             # log.debug( f'form.cleaned_data.__dict__, ``{pprint.pformat(form.cleaned_data.__dict__)}``' )
             # log.debug( f'form.cleaned_data["file"], ``{pprint.pformat(form.cleaned_data["file"])}``' )
             # log.debug( f'form.cleaned_data["file"].name, ``{pprint.pformat(form.cleaned_data["file"].name)}``' )
-            handle_uploaded_file( request.FILES['file'] )
+            uploader_helper.handle_uploaded_file( request.FILES['file'] )
             # context = {'msg' : '<span style="color: green;">File successfully uploaded</span>'}
             msg = 'File successfully uploaded'
             request.session['msg'] = msg
@@ -95,32 +95,22 @@ def uploader(request):
 
 
 
-def handle_uploaded_file(f):
-    """ Handle uploaded file without overwriting pre-existing file. """
-    log.debug( 'starting handle_uploaded_file()' )
-    full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
-    if os.path.exists( full_file_path ):
-        log.debug( 'file exists; appending timestamp' )
-        timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
-        full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
-    log.debug( f'full_file_path, ``{full_file_path}``' )
-    with open( full_file_path, 'wb+' ) as destination:
-        log.debug( 'starting write' )
-        for chunk in f.chunks():
-            destination.write(chunk)
-    log.debug( f'writing finished' )
-    return
-
 # def handle_uploaded_file(f):
-#     """ Handles uploaded file.
-#         Currently overwrites existing file."""
-#     log.debug( f'f.__dict__, ``{pprint.pformat(f.__dict__)}``' )
+#     """ Handle uploaded file without overwriting pre-existing file. """
+#     log.debug( 'starting handle_uploaded_file()' )
 #     full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+#     if os.path.exists( full_file_path ):
+#         log.debug( 'file exists; appending timestamp' )
+#         timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
+#         full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
+#     log.debug( f'full_file_path, ``{full_file_path}``' )
 #     with open( full_file_path, 'wb+' ) as destination:
+#         log.debug( 'starting write' )
 #         for chunk in f.chunks():
 #             destination.write(chunk)
 #     log.debug( f'writing finished' )
 #     return
+
 
 
 

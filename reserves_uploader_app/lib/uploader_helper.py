@@ -1,4 +1,4 @@
-import logging, pprint
+import datetime, logging, os, pprint
 
 import requests
 from django.conf import settings
@@ -6,6 +6,9 @@ from django.core.cache import cache
 
 
 log = logging.getLogger(__name__)
+
+
+## GET helpers ------------------------------------------------------
 
 
 def build_uploader_GET_context( session_message: str ) -> dict:
@@ -51,3 +54,23 @@ def prep_pattern_header_html() -> str:
         cache.set( cache_key, header_html, settings.PATTERN_LIB_CACHE_TIMEOUT )
     log.debug( f'header_html, ``{header_html[0:500]}``' )
     return header_html
+
+
+## POST helpers ------------------------------------------------------
+
+
+def handle_uploaded_file(f):
+    """ Handle uploaded file without overwriting pre-existing file. """
+    log.debug( 'starting handle_uploaded_file()' )
+    full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}'
+    if os.path.exists( full_file_path ):
+        log.debug( 'file exists; appending timestamp' )
+        timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
+        full_file_path = f'{settings.UPLOADS_DIR_PATH}/{f.name}_{timestamp}'
+    log.debug( f'full_file_path, ``{full_file_path}``' )
+    with open( full_file_path, 'wb+' ) as destination:
+        log.debug( 'starting write' )
+        for chunk in f.chunks():
+            destination.write(chunk)
+    log.debug( f'writing finished' )
+    return
