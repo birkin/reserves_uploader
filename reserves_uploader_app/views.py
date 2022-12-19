@@ -83,10 +83,7 @@ def uploader(request):
         log.debug( f'session_message, ``{session_message}``' )
         ## clear out session message --------------------------------
         request.session['msg'] = ''
-        # form = UploadFileForm()
         context: dict = uploader_helper.build_uploader_GET_context( session_message )
-        # resp = render( request, 'templates/single_file.html', {'form': form} )
-        # resp = render( request, 'single_file.html', {'form': form} )
         resp = render( request, 'single_file.html', context )
     else:
         resp = HttpResponseBadRequest( 'bad request' )

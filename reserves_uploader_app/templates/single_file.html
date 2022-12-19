@@ -38,7 +38,8 @@
                     <p style="color: green;">{{ success_message }}</p>
                     {% endautoescape %}
                 {% endif %}
-				<form method="post" action="/uploader/" enctype="multipart/form-data">
+				<!-- <form method="post" action="/uploader/" enctype="multipart/form-data"> -->
+                <form method="post" action="{{ uploader_url }}" enctype="multipart/form-data">
 					{% csrf_token %}
 					<dl>
 						<p>
