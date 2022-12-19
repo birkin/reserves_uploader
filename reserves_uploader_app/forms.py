@@ -20,7 +20,7 @@ class UploadFileForm(forms.Form):
         filename = self.cleaned_data["file"].name
         for prohibited_character in settings.PROHIBITED_CHARACTERS:
             if prohibited_character in filename:
-                msg = f'filename contains prohibited character: ``{prohibited_character}``'
+                msg = f'error: prohibited filename character: ``{prohibited_character}``'
                 log.debug( msg )
                 raise ValidationError( msg )
         # Always return a value to use as the new cleaned data, even if
