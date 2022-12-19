@@ -16,7 +16,11 @@ def build_uploader_GET_context( session_message: str ) -> dict:
         'error_message': '',
         'success_message': '',
         'pattern_header': '',
+        'prohibited_characters': ''
     }
+    prohibited_characters_string = ', '.join( settings.PROHIBITED_CHARACTERS )
+    log.debug( f'prohibited_characters_string, ``{prohibited_characters_string}``')
+    context['prohibited_characters'] = prohibited_characters_string
     pattern_header_html: str = prep_pattern_header_html()
     context['pattern_header'] = pattern_header_html
     if 'success' in repr( session_message ):

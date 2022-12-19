@@ -6,6 +6,12 @@
             div#formbox {
                 padding-top: 2em;
             }
+            div#prohibited_characters {
+                margin-bottom: -.5em;
+            }
+            p#prohibited_paragraph {
+                font-size: 80%;
+            }
             /* the style below doesn't work; i think because the div is empty. */
             /* 
             div#bul_pl_header_end {  
@@ -20,9 +26,11 @@
         <!-- PATTERN-LIBRARY-HEADER end -->
 		<div id="formbox" style="width: 500px; margin: auto;">
 			<fieldset name="Single File Upload">
-                <p>ZZZZ</p>
+                <div id="prohibited_characters">
+                    <p id="prohibited_paragraph"><em>Prohibited filename characters: &nbsp {{ prohibited_characters }}</em></p>
+                </div>
 				{% if error_message %} 
-                    <p style="color: red;">Form not valid, error: {error_messages}</p>
+                    <p style="color: red;">Uploade unsuccessful; error, {{ error_message }}</p>
                 {% endif %}
                 {% if success_message %}
                     <p style="color: green;">File uploaded successfully</p>

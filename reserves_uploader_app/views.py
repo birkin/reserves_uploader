@@ -64,7 +64,7 @@ def uploader(request):
             log.debug( 'form not valid' )
             log.debug( f'form.errors, ``{pprint.pformat(form.errors)}``' )
             log.debug( f'form.non_field_errors(), ``{pprint.pformat(form.non_field_errors())}``' )
-            error_messages = form.non_field_errors()
+            error_messages = form.non_field_errors()[0]
             log.debug( f'error_messages, ``{pprint.pformat(error_messages)}``' )
             # context = {'msg' : '<span style="color: red;">Form not valid</span>'}
             # resp = render(request, 'templates/single_file.html', context)
