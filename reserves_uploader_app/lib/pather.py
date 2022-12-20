@@ -1,4 +1,4 @@
-import logging, unicodedata
+import logging, os, unicodedata
 
 from django.conf import settings
 
@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 def normalize_unicode( initial_filename ) -> str:
     """ Normalizes unicode characters by decomposition.
-        Called by `zzz`. """
+        Called by lib/uploader_helper.handle_uploaded_file(). """
     log.debug( f'initial_filename, ``{initial_filename}``' )
     normalized_filename = unicodedata.normalize( 'NFKD', initial_filename )
     log.debug( f'normalized_filename, ``{normalized_filename}``' )
@@ -41,18 +41,72 @@ def is_valid_filename( filename ) -> dict:
     return assessment
 
 
-def create_file_path( filename, root_path ):
+def create_file_path( filename: str, root_path: str ) -> str:
     """ Creates file path via partial pair-tree structure.
         Example: given a root_path of `/path/to/files`, 
                  if filename is `1234567890.pdf`, 
-                 returns `/path/to/files/12/34/1234567890.pdf`. """
+                 returns `/path/to/files/12/34/1234567890.pdf`. 
+        Called by lib/uploader_helper.handle_uploaded_file(). """
     log.debug( f'filename, ``{filename}``' )
-    ## strip leading '.' and spaces from filename ------------------
-    filename = filename.lstrip( ' ' )
-    if filename.startswith( '.' ):
-        filename = filename[1:]
-    filename = filename.strip( ' ' )
-    filename = filename.replace( ' ', '_' )
-    ## create file_path ---------------------------------------------
-    filepath = f'{root_path}/{filename[:2]}/{filename[2:4]}/{filename}'
-    return filepath
+    ## handle non-ascii filename ------------------------------------
+    pairtree_filepath = ''
+    first_four = filename[:4]
+    try:
+        first_four.encode( 'ascii' )
+    except UnicodeEncodeError:
+        log.debug( 'first_four contains non-ascii characters' )
+        pairtree_filepath = f'{root_path}/unicode/{filename}'
+    ## handle ascii filename ----------------------------------------
+    if pairtree_filepath == '':
+        log.debug( 'filename contains only ascii characters' )
+        ( mainpart, extension ) = os.path.splitext( filename )
+        if len( mainpart ) < 2:
+            pairtree_filepath = f'{root_path}/{filename}'
+        elif len(mainpart) >= 2 and len(mainpart) <= 3:
+            pairtree_filepath = f'{root_path}/{filename[:2]}/{filename}'
+        else:
+            pairtree_filepath = f'{root_path}/{filename[:2]}/{filename[2:4]}/{filename}'
+    log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
+    return pairtree_filepath
+
+
+# def create_file_path( filename: str, root_path: str ) -> str:
+#     """ Creates file path via partial pair-tree structure.
+#         Example: given a root_path of `/path/to/files`, 
+#                  if filename is `1234567890.pdf`, 
+#                  returns `/path/to/files/12/34/1234567890.pdf`. 
+#         Called by lib/uploader_helper.handle_uploaded_file(). """
+#     log.debug( f'filename, ``{filename}``' )
+#     ## handle non-ascii filename ------------------------------------
+#     pairtree_filepath = ''
+#     try:
+#         filename.encode( 'ascii' )
+#     except UnicodeEncodeError:
+#         log.debug( 'filename contains non-ascii characters' )
+#         pairtree_filepath = f'{root_path}/unicode/{filename}'
+#     ## handle ascii filename ----------------------------------------
+#     if pairtree_filepath == '':
+#         log.debug( 'filename contains only ascii characters' )
+#         ( mainpart, extension ) = os.path.splitext( filename )
+#         if len( mainpart ) < 2:
+#             pairtree_filepath = f'{root_path}/{filename}'
+#         elif len(mainpart) >= 2 and len(mainpart) <= 3:
+#             pairtree_filepath = f'{root_path}/{filename[:2]}/{filename}'
+#         else:
+#             pairtree_filepath = f'{root_path}/{filename[:2]}/{filename[2:4]}/{filename}'
+#     log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
+#     return pairtree_filepath
+
+
+def create_subdirectories( pairtree_filepath ) -> None:
+    """ Creates subdirectories if needed.
+        Called by lib/uploader_helper.handle_uploaded_file(). """
+    log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
+    directories_path: str = os.path.dirname( pairtree_filepath )
+    log.debug( f'directories_path, ``{directories_path}``' ) 
+    if not os.path.exists( directories_path ):
+        log.debug( 'directories do not exist' )
+        os.makedirs( directories_path )  # creates directories if needed
+    else:
+        log.debug( 'directories exist' )
+    return
