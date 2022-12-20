@@ -109,8 +109,10 @@ def prep_pattern_header_html() -> str:
 ## POST helper ------------------------------------------------------
 
 
-def handle_uploaded_file( f ) -> str:
-    """ Handle uploaded file without overwriting pre-existing file. 
+def handle_uploaded_file( f ) -> dict:
+    """ Manages uploaded file
+        - creates pairtree filepath 
+        - adds timestamp to filename if filename already exists. 
         Called by views.uploader() """
     log.debug( 'starting handle_uploaded_file()' )
     ## get filename -------------------------------------------------
@@ -120,11 +122,12 @@ def handle_uploaded_file( f ) -> str:
     filename: str = pather.normalize_unicode( filename )
     ## get pairtree filepath ----------------------------------------
     pairtree_filepath = pather.create_file_path( filename, settings.UPLOADS_DIR_PATH )
+    log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
     assert settings.UPLOADS_DIR_PATH in pairtree_filepath  # sanity check
     ## create necessary directories ---------------------------------
-    pather.create_subdirectories( pairtree_filepath )
+    directories_path: str = pather.create_subdirectories( pairtree_filepath )
     # full_file_path = f'{settings.UPLOADS_DIR_PATH}/{filename}'
-    ## add timestamp if file exists ---------------------------------
+    ## add timestamp to filename if file exists ---------------------
     # if os.path.exists( full_file_path ):
     if os.path.exists( pairtree_filepath ):
         log.debug( 'file exists; appending timestamp' )
@@ -132,15 +135,55 @@ def handle_uploaded_file( f ) -> str:
         ( mainpart, extension ) = os.path.splitext( filename )
         if extension:
             filename = f'{mainpart}_{timestamp}{extension}'
-        pairtree_filepath = f'{settings.UPLOADS_DIR_PATH}/{filename}'
-    log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
+        # pairtree_filepath = f'{settings.UPLOADS_DIR_PATH}/{filename}'
+        pairtree_filepath = f'{directories_path}/{filename}'
+        log.debug( f'updated pairtree_filepath, ``{pairtree_filepath}``' )
+    ## make file-url ------------------------------------------------
+    file_url: str = pather.create_file_url( filename, directories_path )
+    ## write file ---------------------------------------------------
     with open( pairtree_filepath, 'wb+' ) as destination:
         log.debug( 'starting write' )
         for chunk in f.chunks():
             destination.write(chunk)
     log.debug( f'writing finished' )
-    log.debug( f'filename now, ``{filename}``' )
-    return filename
+    ## prepare return-dict ------------------------------------------
+    return_dct = { 'filename': filename, 'file_url': file_url }
+    log.debug( f'return_dct, ``{return_dct}``' )
+    return return_dct
+
+
+# def handle_uploaded_file( f ) -> str:
+#     """ Handle uploaded file without overwriting pre-existing file. 
+#         Called by views.uploader() """
+#     log.debug( 'starting handle_uploaded_file()' )
+#     ## get filename -------------------------------------------------
+#     filename = f.name
+#     log.debug( f'filename initially, ``{filename}``' )
+#     ## run unicode-normalizer ---------------------------------------
+#     filename: str = pather.normalize_unicode( filename )
+#     ## get pairtree filepath ----------------------------------------
+#     pairtree_filepath = pather.create_file_path( filename, settings.UPLOADS_DIR_PATH )
+#     assert settings.UPLOADS_DIR_PATH in pairtree_filepath  # sanity check
+#     ## create necessary directories ---------------------------------
+#     pather.create_subdirectories( pairtree_filepath )
+#     # full_file_path = f'{settings.UPLOADS_DIR_PATH}/{filename}'
+#     ## add timestamp if file exists ---------------------------------
+#     # if os.path.exists( full_file_path ):
+#     if os.path.exists( pairtree_filepath ):
+#         log.debug( 'file exists; appending timestamp' )
+#         timestamp = datetime.datetime.now().strftime( '%Y-%m-%d_%H-%M-%S' )
+#         ( mainpart, extension ) = os.path.splitext( filename )
+#         if extension:
+#             filename = f'{mainpart}_{timestamp}{extension}'
+#         pairtree_filepath = f'{settings.UPLOADS_DIR_PATH}/{filename}'
+#     log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
+#     with open( pairtree_filepath, 'wb+' ) as destination:
+#         log.debug( 'starting write' )
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+#     log.debug( f'writing finished' )
+#     log.debug( f'filename now, ``{filename}``' )
+#     return filename
 
 
 # def handle_uploaded_file( f ) -> str:
