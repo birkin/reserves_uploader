@@ -5,6 +5,35 @@ from django.conf import settings
 log = logging.getLogger(__name__)
 
 
+def create_file_url( filename, directories_path ) -> str:
+    """ Creates url for file.
+        Called by lib/uploader_helper.handle_uploaded_file() """
+    log.debug( f'filename, ``{filename}``' )
+    log.debug( f'directories_path, ``{directories_path}``' )
+    url_directory_path = directories_path.replace( settings.UPLOADS_DIR_PATH, settings.UPLOADS_DIR_URL_ROOT )
+    log.debug( f'url_directory_path, ``{url_directory_path}``' )
+    file_url = f'{url_directory_path}/{filename}'
+    log.debug( f'file_url, ``{file_url}``' )
+    return file_url
+
+
+# def create_file_url( filename, pairtree_filepath ) -> str:
+#     """ Creates url for file.
+#         Note: the filename may have been updated with a timestamp, 
+#               and thus be different from the one in the pairtree_filepath.
+#         Called by lib/uploader_helper.handle_uploaded_file() """
+#     log.debug( f'filename, ``{filename}``' )
+#     log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
+#     ( mainpart, filename_from_path ) = os.path.split( pairtree_filepath )
+#     log.debug( f'mainpart, ``{mainpart}``' )
+#     log.debug( f'filename_from_path, ``{filename_from_path}``' )
+#     url_directory_path = pairtree_filepath.replace( settings.UPLOADS_DIR_PATH, settings.UPLOADS_DIR_URL_ROOT )
+#     log.debug( f'url_directory_path, ``{url_directory_path}``' )
+#     file_url = f'{url_directory_path}/{filename}'
+#     log.debug( f'file_url, ``{file_url}``' )
+#     return file_url
+
+
 def normalize_unicode( initial_filename ) -> str:
     """ Normalizes unicode characters by decomposition.
         Called by lib/uploader_helper.handle_uploaded_file(). """
@@ -98,7 +127,7 @@ def create_file_path( filename: str, root_path: str ) -> str:
 #     return pairtree_filepath
 
 
-def create_subdirectories( pairtree_filepath ) -> None:
+def create_subdirectories( pairtree_filepath ) -> str:
     """ Creates subdirectories if needed.
         Called by lib/uploader_helper.handle_uploaded_file(). """
     log.debug( f'pairtree_filepath, ``{pairtree_filepath}``' )
@@ -109,4 +138,4 @@ def create_subdirectories( pairtree_filepath ) -> None:
         os.makedirs( directories_path )  # creates directories if needed
     else:
         log.debug( 'directories exist' )
-    return
+    return directories_path
