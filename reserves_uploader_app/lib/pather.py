@@ -41,7 +41,7 @@ def normalize_unicode( initial_filename ) -> str:
     normalized_filename = unicodedata.normalize( 'NFKD', initial_filename )
     log.debug( f'normalized_filename, ``{normalized_filename}``' )
     evaluation = ( initial_filename == normalized_filename )
-    log.debug( f'evaluation, ``{evaluation}``' )
+    log.debug( f'initial-equals-normalized, ``{evaluation}``' )
     return normalized_filename
 
 
